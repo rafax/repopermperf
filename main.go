@@ -18,11 +18,7 @@ var providers = map[string]func() AuthzProvider{
 	"mmem": func() AuthzProvider { return mapmemory.NewMapMemoryProvider() },
 	"rmem": func() AuthzProvider { return reversememory.NewProvider() },
 	"pg": func() AuthzProvider {
-		conn := "postgres://rafal@localhost:5432/users_repos"
-		if c, ok := os.LookupEnv("RPPERF_PG"); ok {
-			conn = c
-		}
-		p, err := pg.NewProvider(conn)
+		p, err := pg.NewProvider(os.Getenv("RPPERF_PG"))
 		if err != nil {
 			log.Fatal("err initializing postgres provider", err)
 		}

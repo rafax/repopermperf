@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+	"os"
 	"sort"
 	"testing"
 
@@ -185,7 +187,12 @@ func testProvider(t *testing.T, p AuthzProvider) {
 }
 
 func Test_Providers(t *testing.T) {
-	pg, err := pg.NewProvider("postgres://rafal@localhost:5432/users_repos")
+
+	conn, ok := os.LookupEnv("RPPERF_PG")
+	if !ok {
+		log.Fatalf("Cannot initialize pg provider - put Postgres connection string in RPPERF_PG ")
+	}
+	pg, err := pg.NewProvider(conn)
 	if err != nil {
 		t.Fatalf("Could not initialize pg: %v", err)
 	}
