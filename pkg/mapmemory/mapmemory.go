@@ -1,5 +1,6 @@
 package mapmemory
 
+// MapMemoryProvider is a naive implementation of AuthzProvider using in-memory map-of-maps
 type MapMemoryProvider struct {
 	userRepos map[int]*map[int]struct{}
 }
@@ -40,6 +41,6 @@ func (p *MapMemoryProvider) CheckAccess(uid int, rid int) (bool, error) {
 	return false, nil
 }
 
-func NewMapMemoryProvider() *MapMemoryProvider {
+func NewProvider() *MapMemoryProvider {
 	return &MapMemoryProvider{userRepos: map[int]*map[int]struct{}{}}
 }

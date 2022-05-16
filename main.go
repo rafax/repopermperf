@@ -14,8 +14,8 @@ import (
 )
 
 var providers = map[string]func() AuthzProvider{
-	"smem": func() AuthzProvider { return slicememory.NewSliceMemoryProvider() },
-	"mmem": func() AuthzProvider { return mapmemory.NewMapMemoryProvider() },
+	"smem": func() AuthzProvider { return slicememory.NewProvider() },
+	"mmem": func() AuthzProvider { return mapmemory.NewProvider() },
 	"rmem": func() AuthzProvider { return reversememory.NewProvider() },
 	"pg": func() AuthzProvider {
 		p, err := pg.NewProvider(os.Getenv("RPPERF_PG"))

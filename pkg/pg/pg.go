@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
+// PgProvider is an AuthzProvider implementation backed by a Postgres DB
 type PgProvider struct {
 	db *pgx.Conn
 }

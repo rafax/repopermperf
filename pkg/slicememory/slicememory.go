@@ -1,5 +1,6 @@
 package slicememory
 
+// SliceMemoryProvider is a naive implementation of AuthzProvider using in-memory slice
 type SliceMemoryProvider struct {
 	userRepos map[int][]int
 }
@@ -39,6 +40,6 @@ func (p *SliceMemoryProvider) CheckAccess(uid int, rid int) (bool, error) {
 	return false, nil
 }
 
-func NewSliceMemoryProvider() *SliceMemoryProvider {
+func NewProvider() *SliceMemoryProvider {
 	return &SliceMemoryProvider{userRepos: map[int][]int{}}
 }

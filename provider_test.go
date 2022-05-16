@@ -197,9 +197,9 @@ func Test_Providers(t *testing.T) {
 		t.Fatalf("Could not initialize pg: %v", err)
 	}
 	for name, p := range map[string]AuthzProvider{
-		"smem": slicememory.NewSliceMemoryProvider(),
+		"smem": slicememory.NewProvider(),
 		"rmem": reversememory.NewProvider(),
-		"mmem": mapmemory.NewMapMemoryProvider(),
+		"mmem": mapmemory.NewProvider(),
 		"pg":   pg,
 	} {
 		t.Run(name, func(t *testing.T) { testProvider(t, p) })

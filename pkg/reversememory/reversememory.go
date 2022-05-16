@@ -1,5 +1,6 @@
 package reversememory
 
+// ReverseMemoryProvider is an implementation of AuthzProvider using two in-memory maps (accelerating reads at the expense of writes)
 type ReverseMemoryProvider struct {
 	userRepos map[int]*map[int]struct{}
 	repoUsers map[int]*map[int]struct{}
