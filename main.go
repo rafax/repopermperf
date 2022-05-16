@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/rafax/repopermperf/pkg/mapmemory"
+	"github.com/rafax/repopermperf/pkg/pg"
 	"github.com/rafax/repopermperf/pkg/reversememory"
 	"github.com/rafax/repopermperf/pkg/slicememory"
 	"github.com/urfave/cli/v2"
@@ -16,6 +17,17 @@ var providers = map[string]func() AuthzProvider{
 	"smem": func() AuthzProvider { return slicememory.NewSliceMemoryProvider() },
 	"mmem": func() AuthzProvider { return mapmemory.NewMapMemoryProvider() },
 	"rmem": func() AuthzProvider { return reversememory.NewProvider() },
+	"pg": func() AuthzProvider {
+		conn := "postgres://rafal@localhost:5432/users_repos"
+		if c, ok := os.LookupEnv("RPPERF_PG"); ok {
+			conn = c
+		}
+		p, err := pg.NewProvider(conn)
+		if err != nil {
+			log.Fatal("err initializing postgres provider", err)
+		}
+		return p
+	},
 }
 
 func main() {
@@ -88,7 +100,7 @@ func main() {
 			}
 		}
 		relapsed := time.Since(rstart)
-		log.Println("per-user read phase phase took: " + relapsed.String())
+		log.Println("per-repo read phase phase took: " + relapsed.String())
 		return nil
 	}
 
