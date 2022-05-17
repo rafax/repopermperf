@@ -57,19 +57,13 @@ func main() {
 		users := c.Int("users")
 		repos := c.Int("repos")
 		reposPerUser := c.Int("repos-per-user")
-		log.Printf("Will simulate %d users, %d repos, repos/user: %d\n", users, repos, reposPerUser)
-		rand.Seed(c.Int64("seed"))
-		userRepos := [][]int{}
-		a := make([]int, repos)
-		for i := range a {
-			a[i] = i
-		}
-		for i := 0; i < users; i++ {
-			nrepos := rand.Intn(reposPerUser) + reposPerUser/2
-			rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
-			userRepos = append(userRepos, a[:nrepos])
-		}
 		p := providers[c.String("backend")]()
+		log.Printf("Will simulate %d users, %d repos, repos/user: %d, generating data...\n", users, repos, reposPerUser)
+		gstart := time.Now()
+		rand.Seed(c.Int64("seed"))
+		userRepos := generateData(users, repos, reposPerUser)
+		gelapsed := time.Since(gstart)
+		log.Printf("Generated in %v", gelapsed)
 		log.Printf("Starting write phase")
 		start := time.Now()
 		for u, ur := range userRepos {
@@ -79,7 +73,7 @@ func main() {
 		log.Printf("Write phase took: %s, %v per write", elapsed.String(), elapsed/time.Duration(len(userRepos)))
 		log.Printf("Starting per-user read phase")
 		ustart := time.Now()
-		for u, _ := range userRepos {
+		for u := range userRepos {
 			_, err := p.GetUserRepos(u)
 			if err != nil {
 				log.Fatalf("error reading repos for user %d: %v", u, err)
@@ -104,6 +98,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func generateData(users, repos, reposPerUser int) [][]int {
+	userRepos := [][]int{}
+	a := make([]int, repos)
+	for i := range a {
+		a[i] = i
+	}
+	for i := 0; i < users; i++ {
+		nrepos := rand.Intn(reposPerUser) + reposPerUser/2
+		rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
+		userRepos = append(userRepos, a[:nrepos])
+	}
+	return userRepos
 }
 
 type AuthzProvider interface {
