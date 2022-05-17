@@ -76,7 +76,7 @@ func main() {
 			p.SetUserRepos(u, ur)
 		}
 		elapsed := time.Since(start)
-		log.Println("Write phase took: " + elapsed.String())
+		log.Printf("Write phase took: %s, %v per write", elapsed.String(), elapsed/time.Duration(len(userRepos)))
 		log.Printf("Starting per-user read phase")
 		ustart := time.Now()
 		for u, _ := range userRepos {
@@ -86,7 +86,7 @@ func main() {
 			}
 		}
 		uelapsed := time.Since(ustart)
-		log.Println("per-user read phase phase took: " + uelapsed.String())
+		log.Printf("per-user read phase phase took: %s, %v per user", uelapsed.String(), uelapsed/time.Duration(users))
 		log.Printf("Starting per-repo read phase")
 		rstart := time.Now()
 		for i := 0; i < repos; i++ {
@@ -96,7 +96,7 @@ func main() {
 			}
 		}
 		relapsed := time.Since(rstart)
-		log.Println("per-repo read phase phase took: " + relapsed.String())
+		log.Printf("per-repo read phase phase took: %s, %v per repo ", relapsed.String(), relapsed/time.Duration(repos))
 		return nil
 	}
 

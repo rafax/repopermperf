@@ -13,12 +13,12 @@ type PgProvider struct {
 }
 
 func (p *PgProvider) SetUserRepos(uid int, repoIds []int) error {
-	batch := &pgx.Batch{}
+	insert := [][]interface{}{}
 	for _, r := range repoIds {
-		batch.Queue("INSERT INTO users_repos (user_id, repo_id) VALUES ($1,$2)", uid, r)
+		insert = append(insert, []interface{}{uid, r})
 	}
-	r := p.db.SendBatch(context.Background(), batch)
-	return r.Close()
+	_, err := p.db.CopyFrom(context.Background(), pgx.Identifier{"users_repos"}, []string{"user_id", "repo_id"}, pgx.CopyFromRows(insert))
+	return err
 }
 
 func (p *PgProvider) GetUserRepos(uid int) ([]int, error) {
@@ -81,5 +81,5 @@ DROP TABLE IF EXISTS users_repos;
 
 CREATE TABLE users_repos (user_id integer NOT NULL, repo_id integer NOT NULL, CONSTRAINT user_repo_unique UNIQUE(user_id, repo_id));
 
-CREATE INDEX users_repos_repo_id_idx ON users_repos (repo_id );
+CREATE INDEX users_repos_repo_id_idx ON users_repos (repo_id,user_id );
 `
